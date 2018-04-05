@@ -18,19 +18,19 @@ contract('Variable', function(accounts) {
     it('change value', async function() {
         const account = web3.eth.accounts[0];
 
-        let value = (await variable.getValue.call()).toNumber();
+        let value = (await variable.getValue()).toNumber();
         assert.equal(value, 0);
 
-        value = (await variable.setValue.call(10, {from: account})).toNumber();
+        await variable.setValue(10);
+        value = (await variable.getValue()).toNumber();
         assert.equal(value, 10);
 
-        value = (await variable.addValue.call(20, {from: account})).toNumber();
-        assert.equal(value, 30); // 20 !!!!
+        await variable.addValue(20);
+        value = (await variable.getValue()).toNumber();
+        assert.equal(value, 30);
 
-        value = (await variable.mulValue.call(40)).toNumber();
-        assert.equal(value, 1200);
-
-        value = (await variable.getValue.call()).toNumber();
+        await variable.mulValue(40);
+        value = (await variable.getValue()).toNumber();
         assert.equal(value, 1200);
     });
 
@@ -38,21 +38,20 @@ contract('Variable', function(accounts) {
     it('change value with tx', async function() {
         const account = web3.eth.accounts[3];
 
-        let value = (await variable.getValue.call()).toNumber();
+        let value = (await variable.getValue()).toNumber();
         assert.equal(value, 0);
 
-        value = (await variable.setValue.call(10)).toNumber();
-        assert.equal(value, 10);
+        await variable.setValue(10);
 
         let result = await variable.sendTransaction({ from: web3.eth.accounts[0], gas: 3000000, value: 100});
 
-        value = (await variable.getValue.call()).toNumber();
-        assert.equal(value, 110); // 100 !!!!
+        value = (await variable.getValue()).toNumber();
+        assert.equal(value, 110);
 
-        value = (await variable.addValue.call(20, {from: account})).toNumber();
-        assert.equal(value, 120);
-
-        value = (await variable.mulValue.call(40)).toNumber();
-        assert.equal(value, 4800); // 4000
+        await variable.addValue(20);
+        await variable.mulValue(40);
+        value = (await variable.getValue()).toNumber();
+        assert.equal(value, 5200);
     });
+
 });
